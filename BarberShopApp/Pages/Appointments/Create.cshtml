@@ -1,0 +1,87 @@
+﻿@page
+@model BarberShopApp.Pages.Appointments.CreateModel
+
+@{
+    ViewData["Title"] = "Reservar Cita";
+}
+
+<div class="container my-5">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <header class="text-center mb-5">
+                <h1 class="display-6 fw-light text-dark">
+                    <i class="bi bi-scissors me-2 text-dark"></i> @ViewData["Title"]
+                </h1>
+                <p class="lead text-muted">Completa los datos para confirmar tu turno en la barbería.</p>
+            </header>
+
+            <div class="p-4 p-md-5 shadow-lg rounded-4 bg-white" style="border: 1px solid rgba(0, 0, 0, 0.1);">
+
+                <form method="post" class="row g-4">
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Appointment.ClientName" class="form-control" placeholder="Tu Nombre Completo" />
+                            <label asp-for="Appointment.ClientName">Nombre Completo</label>
+                            <span asp-validation-for="Appointment.ClientName" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Appointment.ClientEmail" type="email" class="form-control" placeholder="Tu Correo Electrónico" />
+                            <label asp-for="Appointment.ClientEmail">Correo Electrónico</label>
+                            <span asp-validation-for="Appointment.ClientEmail" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select asp-for="Appointment.ServiceId" class="form-select" id="ServiceSelect" asp-items="Model.ServiceOptions">
+                                <option value="" selected>Elige un servicio</option>
+                            </select>
+                            <label asp-for="Appointment.ServiceId" for="ServiceSelect">Servicio</label>
+                            <span asp-validation-for="Appointment.ServiceId" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select asp-for="Appointment.BarberId" class="form-select" id="BarberSelect" asp-items="Model.BarberOptions">
+                                <option value="" selected>Elige un barbero</option>
+                            </select>
+                            <label asp-for="Appointment.BarberId" for="BarberSelect">Barbero</label>
+                            <span asp-validation-for="Appointment.BarberId" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input asp-for="Appointment.DateTime" type="datetime-local" class="form-control" placeholder="Fecha y Hora de la Cita" />
+                            <label asp-for="Appointment.DateTime">Fecha y Hora</label>
+                            <span asp-validation-for="Appointment.DateTime" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-5">
+                        <button type="submit" value="Reservar Cita" class="btn btn-dark btn-lg w-100 shadow">
+                            <i class="bi bi-calendar-check me-2"></i> Confirmar Reserva
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,84 @@
+﻿@page
+@model BarberShopApp.Pages.Payment.PaymentModel
+@{
+    ViewData["Title"] = "Pagar Reserva";
+}
+
+<div class="container">
+    <h1>Confirmar Pago de la Reserva</h1>
+    <hr />
+
+    <div class="alert alert-info">
+        Total a pagar: <strong>@(Model.AmountInCents / 100).00 €</strong>
+    </div>
+
+    <form id="payment-form">
+        <div class="form-group">
+            <label>Detalles de la Tarjeta:</label>
+            <div id="card-element" class="form-control" style="height: 40px; padding-top: 10px;">
+            </div>
+        </div>
+
+        <div id="payment-message" class="text-danger mt-3"></div>
+
+        <button id="submit" class="btn btn-success mt-4">
+            <span id="button-text">Pagar Ahora</span>
+        </button>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <script>
+        // 2. Comprobar que el ClientSecret se cargó correctamente
+        const clientSecret = '@Model.ClientSecret';
+        if (clientSecret === '') {
+            console.error('El ClientSecret de Stripe no se pudo cargar.');
+        }
+
+        // 3. Inicializar Stripe con la clave publicable del servidor
+        const stripe = Stripe('@Model.StripePublishableKey');
+        const options = {
+            clientSecret: clientSecret,
+            // Aquí puedes configurar la apariencia del formulario
+            appearance: {
+                theme: 'stripe',
+            },
+        };
+
+        // 4. Crear e inyectar el formulario de tarjeta (Elements)
+        const elements = stripe.elements(options);
+        const paymentElement = elements.create('payment');
+        paymentElement.mount('#card-element');
+
+        // 5. Manejar la confirmación del pago
+        const form = document.getElementById('payment-form');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            document.getElementById('button-text').innerText = 'Procesando...';
+            document.getElementById('submit').disabled = true;
+
+            const { error } = await stripe.confirmPayment({
+                elements,
+                confirmParams: {
+                    // Esta es la URL a la que Stripe redirigirá después de un pago exitoso.
+                    // Aquí deberías pasar información para confirmar la cita final.
+                    return_url: window.location.origin + '/Appointments/Confirmation?payment=success',
+                },
+            });
+
+            // Mostrar cualquier error de Stripe al usuario
+            if (error) {
+                const messageContainer = document.querySelector('#payment-message');
+                messageContainer.textContent = error.message;
+
+                // Re-habilitar el botón
+                document.getElementById('button-text').innerText = 'Pagar Ahora';
+                document.getElementById('submit').disabled = false;
+            }
+            // Si no hay error, Stripe realiza la redirección a return_url
+        });
+
+    </script>
+}

@@ -1,0 +1,65 @@
+﻿@page
+@model BarberShopApp.Pages.Tenants.CreateModel
+
+@{
+    ViewData["Title"] = "Registrar Nueva Barbería";
+}
+
+<div class="container my-5">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+
+            <header class="text-center mb-5">
+                <h1 class="display-6 fw-light text-dark">
+                    <i class="bi bi-shop me-2 text-dark"></i> @ViewData["Title"]
+                </h1>
+                <p class="lead text-muted">Ingresa los datos para dar de alta una nueva sucursal o barbería.</p>
+            </header>
+
+            <div class="p-4 p-md-5 shadow-lg rounded-4 bg-white" style="border: 1px solid rgba(0, 0, 0, 0.1);">
+
+                <form method="post" class="row g-4">
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input asp-for="Tenant.Name" class="form-control" placeholder="Nombre de la Barbería" />
+                            <label asp-for="Tenant.Name">Nombre de la Barbería</label>
+                            <span asp-validation-for="Tenant.Name" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input asp-for="Tenant.AdminEmail" type="email" class="form-control" placeholder="Email del Administrador" />
+                            <label asp-for="Tenant.AdminEmail">Email del Administrador</label>
+                            <span asp-validation-for="Tenant.AdminEmail" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-5">
+                        <button type="submit" value="Registrar" class="btn btn-dark btn-lg w-100 shadow">
+                            <i class="bi bi-check-circle-fill me-2"></i> Registrar Barbería
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+
+            <div class="text-center mt-4">
+                <a asp-page="Index" class="text-decoration-none text-muted small">
+                    <i class="bi bi-arrow-left"></i> Volver a la Lista de Barberías
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

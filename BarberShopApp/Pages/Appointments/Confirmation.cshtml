@@ -1,0 +1,57 @@
+﻿@page
+@model BarberShopApp.Pages.Appointments.ConfirmationModel
+
+@{
+    ViewData["Title"] = "Cita Confirmada";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <header class="text-center mb-5">
+                <h1 class="display-5 fw-bold text-success">
+                    <i class="bi bi-check-circle-fill me-2"></i> ¡Reserva Exitosa!
+                </h1>
+                <p class="lead text-muted">Tu cita ha sido confirmada y se ha enviado un resumen a tu correo electrónico.</p>
+            </header>
+
+            <div class="p-4 p-md-5 shadow-lg rounded-4 bg-white border border-success">
+
+                <h2 class="h4 mb-4 text-primary">Detalles de la Cita</h2>
+
+                <dl class="row">
+                    <dt class="col-sm-4 text-muted">Cita ID:</dt>
+                    <dd class="col-sm-8 fw-bold">@Model.Appointment?.AppointmentId</dd>
+
+                    <dt class="col-sm-4 text-muted">Cliente:</dt>
+                    <dd class="col-sm-8">@Model.Appointment?.ClientName</dd>
+
+                    <dt class="col-sm-4 text-muted">Servicio:</dt>
+                    <dd class="col-sm-8">@Model.Appointment?.Service?.Name</dd>
+
+                    <dt class="col-sm-4 text-muted">Barbero:</dt>
+                    <dd class="col-sm-8">@Model.Appointment?.Barber?.Name</dd>
+
+                    <dt class="col-sm-4 text-muted">Fecha y Hora:</dt>
+                    <dd class="col-sm-8">
+                        <span class="fw-bold">@Model.Appointment?.DateTime.ToString("dd MMMM yyyy")</span> a las
+                        <span class="fw-bold text-danger">@Model.Appointment?.DateTime.ToString("HH:mm")</span>
+                    </dd>
+
+                    <dt class="col-sm-4 text-muted">Duración Estimada:</dt>
+                    <dd class="col-sm-8">@Model.Appointment?.Service?.DurationMinutes minutos</dd>
+
+                    <dt class="col-sm-4 text-muted">Estado:</dt>
+                    <dd class="col-sm-8 text-success fw-bold">@Model.Appointment?.Status</dd>
+                </dl>
+
+                <hr class="my-4">
+
+                <p class="text-center">
+                    <a asp-page="/Index" class="btn btn-dark btn-lg">Volver al Inicio</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</div>

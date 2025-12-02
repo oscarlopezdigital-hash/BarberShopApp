@@ -1,0 +1,66 @@
+﻿@page
+@model BarberShopApp.Pages.Barbers.IndexModel
+
+@{
+    ViewData["Title"] = "Gestión de Barberos";
+}
+
+<div class="container my-5">
+
+    <header class="d-flex justify-content-between align-items-center mb-5 pb-2 border-bottom">
+        <h1 class="display-6 fw-light text-dark">
+            <i class="bi bi-people-fill me-2 text-dark"></i> @ViewData["Title"]
+        </h1>
+        <a asp-page="Create" class="btn btn-dark btn-lg shadow-sm">
+            <i class="bi bi-person-plus-fill me-2"></i> Añadir Nuevo Barbero
+        </a>
+    </header>
+
+    @if (Model.Barber.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var item in Model.Barber)
+            {
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-lg rounded-4 overflow-hidden bg-light card-hover">
+                        <div class="card-body p-4 text-center">
+
+                            <i class="bi bi-person-circle fs-1 text-secondary mb-3"></i>
+
+                            <h5 class="card-title fw-bold text-dark mb-1">
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </h5>
+
+                            <p class="card-subtitle mb-3 text-muted small">
+                                <i class="bi bi-envelope me-1"></i> @Html.DisplayFor(modelItem => item.Email)
+                            </p>
+
+                            <div class="d-grid mt-3">
+                                <a asp-page="./Details" asp-route-id="@item.BarberId" class="btn btn-dark btn-sm shadow-sm">
+                                    Ver Perfil
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-white border-0 d-flex justify-content-end gap-3 py-3">
+                            <a asp-page="./Edit" asp-route-id="@item.BarberId" class="btn btn-link text-secondary p-0 small" title="Editar">
+                                Editar
+                            </a>
+                            <a asp-page="./Delete" asp-route-id="@item.BarberId" class="btn btn-link text-danger p-0 small" title="Eliminar">
+                                Eliminar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center mt-5" role="alert">
+            <p class="mb-0">Aún no hay barberos registrados en esta sucursal.</p>
+            <hr>
+            <a asp-page="Create" class="btn btn-info">Registrar un nuevo barbero</a>
+        </div>
+    }
+</div>

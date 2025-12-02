@@ -1,0 +1,80 @@
+﻿@page
+@model EditModel
+@{
+    ViewData["Title"] = "Editar Barbero";
+}
+
+<div class="container my-5">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9">
+
+            <header class="text-center mb-5">
+                <h1 class="display-6 fw-light text-dark">
+                    <i class="bi bi-pencil-square me-2 text-dark"></i> @ViewData["Title"]
+                </h1>
+                <p class="lead text-muted">Modifica los datos del perfil de <span class="fw-bold">@Model.Barber.Name</span>.</p>
+            </header>
+
+            <div class="p-4 p-md-5 shadow-lg rounded-4 bg-white" style="border: 1px solid rgba(0, 0, 0, 0.1);">
+
+                <form method="post" class="row g-4">
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <input type="hidden" asp-for="Barber.BarberId" />
+                    <input type="hidden" asp-for="Barber.TenantId" />
+
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input asp-for="Barber.Name" class="form-control" placeholder="Nombre completo" />
+                            <label asp-for="Barber.Name">Nombre Completo</label>
+                            <span asp-validation-for="Barber.Name" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input asp-for="Barber.Email" type="email" class="form-control" placeholder="Correo electrónico" />
+                            <label asp-for="Barber.Email">Correo Electrónico</label>
+                            <span asp-validation-for="Barber.Email" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <textarea asp-for="Barber.Description" class="form-control" placeholder="Descripción y especialidades" style="height: 120px"></textarea>
+                            <label asp-for="Barber.Description">Descripción y Especialidades</label>
+                            <span asp-validation-for="Barber.Description" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-5 d-flex justify-content-between">
+
+                        <button type="submit" value="Guardar Cambios" class="btn btn-dark btn-lg shadow-sm">
+                            <i class="bi bi-floppy-fill me-2"></i> Guardar Cambios
+                        </button>
+
+                        <a asp-page="./Index" class="btn btn-outline-secondary btn-lg">
+                            <i class="bi bi-x-lg me-2"></i> Cancelar
+                        </a>
+                    </div>
+                </form>
+
+            </div>
+
+            <div class="text-center mt-4">
+                <a asp-page="./Details" asp-route-id="@Model.Barber.BarberId" class="text-decoration-none text-muted small">
+                    <i class="bi bi-eye"></i> Ver Perfil
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,63 @@
+﻿@page
+@model BarberShopApp.Pages.Tenants.IndexModel
+
+@{
+    ViewData["Title"] = "Gestión de Barberías (Super-Admin)";
+}
+
+<div class="container my-5">
+
+    <header class="d-flex justify-content-between align-items-center mb-5 pb-2 border-bottom">
+        <h1 class="display-6 fw-light text-dark">
+            <i class="bi bi-building-fill me-2 text-dark"></i> @ViewData["Title"]
+        </h1>
+        <a asp-page="Create" class="btn btn-dark btn-lg shadow-sm">
+            <i class="bi bi-plus-lg me-2"></i> Registrar Nueva Barbería
+        </a>
+    </header>
+
+    @if (Model.Tenant.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var item in Model.Tenant)
+            {
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-lg rounded-4 overflow-hidden bg-white card-hover">
+                        <div class="card-body p-4">
+
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="card-title fw-bold text-dark">
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </h5>
+                                <span class="badge bg-secondary-subtle text-secondary fw-normal small">
+                                    ID: @Html.DisplayFor(modelItem => item.TenantId)
+                                </span>
+                            </div>
+
+                            <p class="card-text text-muted mb-3 small">
+                                <i class="bi bi-envelope me-2"></i> Email Admin: <span class="text-dark fw-normal">@Html.DisplayFor(modelItem => item.AdminEmail)</span>
+                            </p>
+
+                            <div class="d-grid gap-2 mt-4 pt-3 border-top">
+                                <a asp-page="./Edit" asp-route-id="@item.TenantId" class="btn btn-dark btn-sm shadow-sm">
+                                    <i class="bi bi-pencil-fill me-2"></i> Administrar/Editar
+                                </a>
+                                <a asp-page="./Delete" asp-route-id="@item.TenantId" class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-trash-fill me-2"></i> Eliminar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center mt-5" role="alert">
+            <p class="mb-0">Aún no hay barberías (Tenants) registrados en el sistema.</p>
+            <hr>
+            <a asp-page="Create" class="btn btn-info">Registrar la primera barbería</a>
+        </div>
+    }
+</div>
