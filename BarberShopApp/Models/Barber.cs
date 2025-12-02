@@ -14,13 +14,17 @@ namespace BarberShopApp.Models
         [Display(Name = "Descripción/Especialidad")]
         public string? Description { get; set; }
 
-        // *** AÑADIR ESTAS LÍNEAS ***
         [Required(ErrorMessage = "El email es obligatorio para notificaciones.")]
         [EmailAddress(ErrorMessage = "Formato de email incorrecto.")]
         [Display(Name = "Email de Contacto")]
         [StringLength(256)]
         public string? Email { get; set; }
-        // ***************************
+
+        // *** ¡NUEVA PROPIEDAD REQUERIDA! ***
+        [Display(Name = "Teléfono")]
+        [StringLength(20)]
+        public string? Phone { get; set; }
+        // **********************************
 
         public int TenantId { get; set; }
         public Tenant? Tenant { get; set; }

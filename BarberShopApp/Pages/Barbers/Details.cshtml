@@ -2,60 +2,88 @@
 @model BarberShopApp.Pages.Barbers.DetailsModel
 
 @{
-    ViewData["Title"] = "Perfil del Barbero";
+    ViewData["Title"] = "Perfil de Barbero";
 }
 
 <div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-7 col-md-9">
 
-            <header class="text-center mb-5">
-                <h1 class="display-5 fw-bold text-dark mb-1">
-                    <i class="bi bi-person-circle me-3 text-secondary"></i> @Html.DisplayFor(model => model.Barber.Name)
-                </h1>
-                <p class="lead text-muted">
-                    @ViewData["Title"]
-                </p>
-            </header>
+    <header class="mb-5">
+        <h1 class="display-6 fw-light text-dark border-bottom pb-2">
+            <i class="bi bi-person-badge me-3"></i> Perfil del Barbero
+        </h1>
+    </header>
 
-            <div class="p-4 p-md-5 shadow-lg rounded-4 bg-white border border-2">
+    @if (Model.Barber != null)
+    {
+        <div class="row g-4">
 
-                <h4 class="mb-4 text-dark border-bottom pb-2">Datos y Especialización</h4>
+            <div class="col-md-4">
+                <div class="card shadow-lg rounded-4 text-center border-0 h-100 p-3">
+                    <div class="card-body">
 
-                <ul class="list-group list-group-flush mb-4">
+                        <i class="bi bi-person-circle display-1 text-dark mb-3"></i>
 
-                    <li class="list-group-item d-flex justify-content-between align-items-center px-0 bg-white">
-                        <span class="text-muted fw-bold"><i class="bi bi-shop me-2"></i> @Html.DisplayNameFor(model => model.Barber.Tenant):</span>
-                        <span class="text-dark">@Html.DisplayFor(model => model.Barber.Tenant.AdminEmail)</span>
-                    </li>
+                        <h4 class="card-title fw-bold text-dark mb-0">@Model.Barber.Name</h4>
+                        <p class="card-text text-muted small mt-1">ID: @Model.Barber.BarberId</p>
+                        <hr class="my-3" />
 
-                    <li class="list-group-item d-flex justify-content-between align-items-center px-0 bg-white">
-                        <span class="text-muted fw-bold"><i class="bi bi-envelope me-2"></i> Correo Electrónico:</span>
-                        <span class="text-dark">@Html.DisplayFor(model => model.Barber.Email)</span>
-                    </li>
-                </ul>
-
-                <div class="mt-4 pt-4 border-top">
-                    <h4 class="mb-3 text-secondary">
-                        <i class="bi bi-journal-text me-2"></i> @Html.DisplayNameFor(model => model.Barber.Description)
-                    </h4>
-                    <blockquote class="blockquote border-start border-3 ps-3 text-muted">
-                        <p class="mb-0 fs-6">
-                            @Html.DisplayFor(model => model.Barber.Description)
-                        </p>
-                    </blockquote>
+                        <div class="text-start">
+                            <p class="mb-1 small">
+                                <i class="bi bi-envelope-fill me-2 text-secondary"></i> @Model.Barber.Email
+                            </p>
+                            <p class="mb-0 small @(string.IsNullOrEmpty(Model.Barber.Phone) ? "text-muted fst-italic" : "text-dark")">
+                                <i class="bi bi-phone-fill me-2 text-secondary"></i>
+                                @(string.IsNullOrEmpty(Model.Barber.Phone) ? "Teléfono no especificado" : Model.Barber.Phone)
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center mt-4">
-                <a asp-page="./Index" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left me-2"></i> Volver al Índice
-                </a>
-                <a asp-page="./Edit" asp-route-id="@Model.Barber.BarberId" class="btn btn-dark shadow-sm">
-                    <i class="bi bi-pencil-fill me-2"></i> Editar Perfil
-                </a>
-            </div>
+            <div class="col-md-8">
 
+                <div class="card shadow-lg rounded-4 border-0 mb-4">
+                    <div class="card-header bg-dark text-white rounded-top-4">
+                        <i class="bi bi-shield-lock me-2"></i> Información Administrativa
+                    </div>
+                    <div class="card-body">
+
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span class="text-muted">Nombre Completo:</span>
+                                <span class="fw-bold">@Html.DisplayFor(model => model.Barber.Name)</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span class="text-muted">Correo Electrónico:</span>
+                                <span>@Html.DisplayFor(model => model.Barber.Email)</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span class="text-muted">Teléfono (Opcional):</span>
+                                <span>@(string.IsNullOrEmpty(Model.Barber.Phone) ? "N/A" : Model.Barber.Phone)</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span class="text-muted">ID de Barbería (Tenant ID):</span>
+                                <span>@Html.DisplayFor(model => model.Barber.TenantId)</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="alert alert-info shadow-sm p-3 border-0">
+                    <i class="bi bi-calendar-event me-2"></i> Próxima Tarea: Historial de Citas
+                    <p class="mb-0 small mt-1">Muestra aquí la lista de citas pendientes y completadas para una gestión completa.</p>
+                </div>
+
+            </div>
         </div>
-    </div>
+
+        <div class="mt-5 text-center">
+            <a asp-page="./Index" class="btn btn-outline-secondary btn-lg me-3">
+                <i class="bi bi-arrow-left me-2"></i> Volver a Gestión de Barberos
+            </a>
+            <a asp-page="./Edit" asp-route-id="@Model.Barber.BarberId" class="btn btn-dark btn-lg shadow">
+                <i class="bi bi-pencil-fill me-2"></i> Editar Perfil
+            </a>
+        </div>
+    }
 </div>
