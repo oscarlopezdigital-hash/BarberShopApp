@@ -1,4 +1,5 @@
 ﻿// Data/ApplicationDbContext.cs
+using BarberShopApp.Data.Configurations;
 using BarberShopApp.Models;
 using BarberShopApp.Services; // IMPORTACIÓN NECESARIA para ITenantService
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -26,6 +27,8 @@ namespace BarberShopApp.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder); // Siempre llama al base para Identity
+
+            builder.ApplyConfiguration(new TenantConfiguration());
 
             // --- CONFIGURACIÓN DE RELACIONES (Para evitar error de Cascada) ---
 

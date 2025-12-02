@@ -11,7 +11,7 @@ namespace BarberShopApp.Services
         public int GetCurrentTenantId()
         {
             // !!! CAMBIA ESTE VALOR AL ID DE UN TENANT QUE EXISTA EN TU BASE DE DATOS !!!
-            return 3; // Ejemplo: Usamos 2 si fue el primer Tenant creado en el CRUD.
+            return 1; // Ejemplo: Usamos 2 si fue el primer Tenant creado en el CRUD.
         }
     }
 }

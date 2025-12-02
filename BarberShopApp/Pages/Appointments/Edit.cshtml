@@ -2,64 +2,98 @@
 @model BarberShopApp.Pages.Appointments.EditModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Cita";
 }
 
-<h1>Edit</h1>
+<div class="container my-5">
 
-<h4>Appointment</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Appointment.AppointmentId" />
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="Appointment.BarberId" class="control-label"></label>
-                <select asp-for="Appointment.BarberId" class="form-control" asp-items="ViewBag.BarberId"></select>
-                <span asp-validation-for="Appointment.BarberId" class="text-danger"></span>
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9">
+
+            <header class="text-center mb-5">
+                <h1 class="display-6 fw-light text-dark">
+                    <i class="bi bi-calendar-check me-2 text-dark"></i> @ViewData["Title"]
+                </h1>
+                <p class="lead text-muted">
+                    Cita #<span class="fw-bold">@Model.Appointment.AppointmentId</span> con <span class="fw-bold">@Model.Appointment.ClientName</span>.
+                </p>
+            </header>
+
+            <div class="p-4 p-md-5 shadow-lg rounded-4 bg-white" style="border: 1px solid rgba(0, 0, 0, 0.1);">
+
+                <form method="post" class="row g-4">
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <input type="hidden" asp-for="Appointment.AppointmentId" />
+                    <input type="hidden" asp-for="Appointment.TenantId" />
+                    <input type="hidden" asp-for="Appointment.Status" />
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Appointment.ClientName" class="form-control" placeholder="Nombre Completo" />
+                            <label asp-for="Appointment.ClientName">Nombre Completo</label>
+                            <span asp-validation-for="Appointment.ClientName" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Appointment.ClientEmail" type="email" class="form-control" placeholder="Correo Electrónico" readonly />
+                            <label asp-for="Appointment.ClientEmail">Correo Electrónico (No Editable)</label>
+                            <span asp-validation-for="Appointment.ClientEmail" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select asp-for="Appointment.BarberId" class="form-select" id="BarberSelect" asp-items="ViewBag.BarberId">
+                                <option value="" selected>Elige un barbero</option>
+                            </select>
+                            <label asp-for="Appointment.BarberId" for="BarberSelect">Barbero</label>
+                            <span asp-validation-for="Appointment.BarberId" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select asp-for="Appointment.ServiceId" class="form-select" id="ServiceSelect" asp-items="ViewBag.ServiceId">
+                                <option value="" selected>Elige un servicio</option>
+                            </select>
+                            <label asp-for="Appointment.ServiceId" for="ServiceSelect">Servicio</label>
+                            <span asp-validation-for="Appointment.ServiceId" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input type="datetime-local"
+                                   asp-for="Appointment.DateTime"
+                                   value="@Model.Appointment.DateTime.ToString("yyyy-MM-ddTHH:mm")"
+                                   class="form-control"
+                                   placeholder="Fecha y Hora de la Cita" />
+                            <label asp-for="Appointment.DateTime">Fecha y Hora</label>
+                            <span asp-validation-for="Appointment.DateTime" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-5 d-flex justify-content-between">
+                        <button type="submit" class="btn btn-dark btn-lg shadow-sm">
+                            <i class="bi bi-save-fill me-2"></i> Guardar Cambios
+                        </button>
+                        <a asp-page="./Index" class="btn btn-outline-secondary btn-lg">
+                            <i class="bi bi-arrow-left me-2"></i> Volver a la Lista
+                        </a>
+                    </div>
+                </form>
+
             </div>
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="Appointment.ServiceId" class="control-label"></label>
-                <select asp-for="Appointment.ServiceId" class="form-control" asp-items="ViewBag.ServiceId"></select>
-                <span asp-validation-for="Appointment.ServiceId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="Appointment.ClientName" class="control-label"></label>
-                <input asp-for="Appointment.ClientName" class="form-control" />
-                <span asp-validation-for="Appointment.ClientName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="Appointment.ClientEmail" class="control-label"></label>
-                <input asp-for="Appointment.ClientEmail" class="form-control" />
-                <span asp-validation-for="Appointment.ClientEmail" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="Appointment.DateTime" class="control-label"></label>
-                <input asp-for="Appointment.DateTime" class="form-control" />
-                <span asp-validation-for="Appointment.DateTime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Appointment.Status" class="control-label"></label>
-                <input asp-for="Appointment.Status" class="form-control" />
-                <span asp-validation-for="Appointment.Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-page="./Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

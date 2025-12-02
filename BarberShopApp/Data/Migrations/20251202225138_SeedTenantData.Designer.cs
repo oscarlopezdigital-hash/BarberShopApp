@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BarberShopApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251202190633_FixAppointmentIdentity")]
-    partial class FixAppointmentIdentity
+    [Migration("20251202225138_SeedTenantData")]
+    partial class SeedTenantData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -150,6 +150,14 @@ namespace BarberShopApp.Data.Migrations
                     b.HasKey("TenantId");
 
                     b.ToTable("Tenants");
+
+                    b.HasData(
+                        new
+                        {
+                            TenantId = 1,
+                            AdminEmail = "admin@barberiacentral.com",
+                            Name = "Barbería Central"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

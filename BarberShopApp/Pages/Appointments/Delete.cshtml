@@ -2,57 +2,70 @@
 @model BarberShopApp.Pages.Appointments.DeleteModel
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Eliminar Cita";
 }
 
-<h1>Delete</h1>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Appointment</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appointment.Barber)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Appointment.Barber.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appointment.Service)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Appointment.Service.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appointment.ClientName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Appointment.ClientName)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appointment.ClientEmail)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Appointment.ClientEmail)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appointment.DateTime)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Appointment.DateTime)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appointment.Status)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Appointment.Status)
-        </dd>
-    </dl>
-    
-    <form method="post">
-        <input type="hidden" asp-for="Appointment.AppointmentId" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-page="./Index">Back to List</a>
-    </form>
+            <header class="text-center mb-5">
+                <h1 class="display-6 fw-light text-danger">
+                    <i class="bi bi-x-circle-fill me-2"></i> Confirmar Cancelación
+                </h1>
+                <h3 class="lead text-dark fw-bold mt-4">¿Estás seguro de que quieres eliminar la cita #@Model.Appointment.AppointmentId?</h3>
+                <p class="text-danger lead fw-normal">Esta acción es **permanente** y no se puede deshacer.</p>
+            </header>
+
+            @if (Model.Appointment != null)
+            {
+                <div class="p-4 p-md-5 shadow-lg rounded-4 bg-light" style="border: 2px solid rgba(220, 53, 69, 0.5);">
+
+                    <h4 class="mb-4 text-dark border-bottom pb-2">Detalles de la Cita</h4>
+
+                    <ul class="list-group list-group-flush mb-4">
+
+                        <li class="list-group-item bg-light d-flex justify-content-between align-items-center">
+                            <span class="text-muted fw-bold"><i class="bi bi-person-fill me-2"></i> Cliente:</span>
+                            <span class="text-dark fw-bold">@Html.DisplayFor(model => model.Appointment.ClientName)</span>
+                        </li>
+
+                        <li class="list-group-item bg-light d-flex justify-content-between align-items-center">
+                            <span class="text-muted fw-bold"><i class="bi bi-calendar-event me-2"></i> Fecha y Hora:</span>
+                            <span class="text-dark fw-bold">@Model.Appointment.DateTime.ToString("dddd, dd MMMM yyyy, HH:mm")</span>
+                        </li>
+
+                        <li class="list-group-item bg-light d-flex justify-content-between align-items-center">
+                            <span class="text-muted"><i class="bi bi-scissors me-2"></i> Servicio:</span>
+                            <span class="text-dark">@Html.DisplayFor(model => model.Appointment.Service!.Name) (@Model.Appointment.Service!.DurationMinutes min)</span>
+                        </li>
+
+                        <li class="list-group-item bg-light d-flex justify-content-between align-items-center">
+                            <span class="text-muted"><i class="bi bi-person-circle me-2"></i> Barbero:</span>
+                            <span class="text-dark">@Html.DisplayFor(model => model.Appointment.Barber!.Name)</span>
+                        </li>
+
+                        <li class="list-group-item bg-light d-flex justify-content-between align-items-center">
+                            <span class="text-muted"><i class="bi bi-info-circle me-2"></i> Estado:</span>
+                            <span class="text-dark">@Html.DisplayFor(model => model.Appointment.Status)</span>
+                        </li>
+                    </ul>
+
+                    <form method="post" class="mt-4 pt-3 border-top">
+                        <input type="hidden" asp-for="Appointment.AppointmentId" />
+
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-danger btn-lg shadow-sm">
+                                <i class="bi bi-trash-fill me-2"></i> SÍ, Eliminar Cita
+                            </button>
+
+                            <a asp-page="./Index" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-lg me-2"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            }
+        </div>
+    </div>
 </div>

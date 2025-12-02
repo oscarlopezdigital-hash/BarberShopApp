@@ -2,65 +2,78 @@
 @model BarberShopApp.Pages.Appointments.IndexModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Citas Programadas";
 }
 
-<h1>Index</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="display-6">Agenda de Citas</h1>
+    <a asp-page="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle-fill me-1"></i> Crear Nueva Cita
+    </a>
+</div>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Appointment[0].Barber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Appointment[0].Service)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Appointment[0].ClientName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Appointment[0].ClientEmail)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Appointment[0].DateTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Appointment[0].Status)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Appointment) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Barber.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Service.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ClientName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ClientEmail)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.AppointmentId">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.AppointmentId">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.AppointmentId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="table-responsive">
+    <table class="table table-hover table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Appointment[0].DateTime)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Appointment[0].ClientName)
+                </th>
+                <th>Servicio</th>
+                <th>Barbero</th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Appointment[0].Status)
+                </th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Appointment)
+            {
+                <tr>
+                    <td>
+                        <span class="fw-bold">@item.DateTime.ToString("dd MMMM yyyy")</span><br />
+                        <span class="text-muted">@item.DateTime.ToString("HH:mm")</span>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ClientName)<br />
+                        <small class="text-info">@Html.DisplayFor(modelItem => item.ClientEmail)</small>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Service!.Name)
+                        <span class="badge bg-secondary ms-2">@item.Service!.DurationMinutes min</span>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Barber!.Name)
+                    </td>
+                    <td>
+                        @{
+                            string badgeClass = item.Status switch
+                            {
+                                "Confirmada" => "bg-success",
+                                "Pendiente" => "bg-warning text-dark",
+                                "Cancelada" => "bg-danger",
+                                _ => "bg-secondary"
+                            };
+                        }
+                        <span class="badge @badgeClass">@Html.DisplayFor(modelItem => item.Status)</span>
+                    </td>
+                    <td>
+                        <a asp-page="./Edit" asp-route-id="@item.AppointmentId" class="btn btn-sm btn-outline-secondary me-1" title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a asp-page="./Details" asp-route-id="@item.AppointmentId" class="btn btn-sm btn-outline-info me-1" title="Detalles">
+                            <i class="bi bi-info-circle"></i>
+                        </a>
+                        <a asp-page="./Delete" asp-route-id="@item.AppointmentId" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

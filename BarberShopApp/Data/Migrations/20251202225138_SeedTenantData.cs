@@ -5,7 +5,7 @@
 namespace BarberShopApp.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddEmailToBarber : Migration
+    public partial class SeedTenantData : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,11 +17,21 @@ namespace BarberShopApp.Data.Migrations
                 maxLength: 256,
                 nullable: false,
                 defaultValue: "");
+
+            migrationBuilder.InsertData(
+                table: "Tenants",
+                columns: new[] { "TenantId", "AdminEmail", "Name" },
+                values: new object[] { 1, "admin@barberiacentral.com", "Barbería Central" });
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DeleteData(
+                table: "Tenants",
+                keyColumn: "TenantId",
+                keyValue: 1);
+
             migrationBuilder.DropColumn(
                 name: "Email",
                 table: "Barbers");

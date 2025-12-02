@@ -147,6 +147,14 @@ namespace BarberShopApp.Data.Migrations
                     b.HasKey("TenantId");
 
                     b.ToTable("Tenants");
+
+                    b.HasData(
+                        new
+                        {
+                            TenantId = 1,
+                            AdminEmail = "admin@barberiacentral.com",
+                            Name = "Barbería Central"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

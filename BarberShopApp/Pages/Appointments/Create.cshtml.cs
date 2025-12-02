@@ -42,7 +42,6 @@ namespace BarberShopApp.Pages.Appointments
             return Page();
         }
 
-        // OnPostAsync: Maneja el envío del formulario y la lógica central
         public async Task<IActionResult> OnPostAsync()
         {
             // 1. Validación de Datos (DataAnnotations)
@@ -52,12 +51,47 @@ namespace BarberShopApp.Pages.Appointments
                 return Page();
             }
 
+            // ----------------------------------------------------------------------------------
+            // CORRECCIÓN TEMPORAL: Asegurar que la fecha sea válida (en caso de error del formulario)
+            // ----------------------------------------------------------------------------------
+            if (Appointment.DateTime.Year < DateTime.Now.Year)
+            {
+                // Forzamos una fecha futura válida (Mañana a las 10 AM)
+                Appointment.DateTime = DateTime.Today.AddDays(1).AddHours(10).AddMinutes(-DateTime.Now.Minute).AddSeconds(-DateTime.Now.Second);
+            }
+            // ----------------------------------------------------------------------------------
+
+
+            // --- 2. NUEVAS VALIDACIONES: DÍAS Y HORARIOS DE LA BARBERÍA ---
+
+            // A. Restricción de Días (Excluir Domingo)
+            if (Appointment.DateTime.DayOfWeek == DayOfWeek.Sunday)
+            {
+                ModelState.AddModelError("Appointment.DateTime", "❌ La barbería no abre los domingos. Por favor, elige otro día.");
+                await PopulateSelectionLists();
+                return Page();
+            }
+
+            // B. Restricción de Horas (Entre 9:00 AM y 6:00 PM)
+            TimeSpan startTime = new TimeSpan(9, 0, 0);  // 9:00 AM
+            TimeSpan endTime = new TimeSpan(18, 0, 0); // 6:00 PM (18:00)
+            TimeSpan requestedTime = Appointment.DateTime.TimeOfDay;
+
+            if (requestedTime < startTime || requestedTime > endTime)
+            {
+                ModelState.AddModelError("Appointment.DateTime", "❌ Horario no disponible. Solo se puede reservar entre las 9:00 AM y las 6:00 PM.");
+                await PopulateSelectionLists();
+                return Page();
+            }
+
+            // ----------------------------------------------------------------------------------
+
+
             // --- LÓGICA DE MULTI-TENANCY ---
             // Asignamos el TenantId antes de cualquier operación de base de datos
             Appointment.TenantId = _tenantService.GetCurrentTenantId();
 
-            // 2. Obtener la duración del servicio y calcular la hora de fin
-            // NOTA: Usamos AsNoTracking() para que la consulta no rastree accidentalmente la entidad en el contexto.
+            // 3. Obtener la duración del servicio y calcular la hora de fin
             var service = await _context.Services
                                          .AsNoTracking()
                                          .FirstOrDefaultAsync(s => s.ServiceId == Appointment.ServiceId);
@@ -73,7 +107,7 @@ namespace BarberShopApp.Pages.Appointments
             DateTime appointmentStart = Appointment.DateTime;
             DateTime appointmentEnd = appointmentStart.Add(duration);
 
-            // 3. Comprobar Superposición de Horarios (Validación de Disponibilidad)
+            // 4. Comprobar Superposición de Horarios (Validación de Disponibilidad)
             if (await IsBarberUnavailable(Appointment.BarberId, appointmentStart, appointmentEnd))
             {
                 ModelState.AddModelError("Appointment.DateTime", "❌ El barbero seleccionado no está disponible en este horario. Por favor, elige otra hora.");
@@ -81,33 +115,32 @@ namespace BarberShopApp.Pages.Appointments
                 return Page();
             }
 
-            // --- 4. SI TODAS LAS VALIDACIONES PASAN, GUARDAR LA CITA (¡SÓLO AQUÍ!) ---
+            // --- 5. SI TODAS LAS VALIDACIONES PASAN, GUARDAR LA CITA ---
 
             // Configuramos el estado final antes de guardar
             Appointment.Status = "Confirmada";
 
             // Agregamos la entidad al contexto y la guardamos.
-            // EF Core generará el AppointmentId aquí, resolviendo el error IDENTITY_INSERT.
             _context.Appointments.Add(Appointment);
             await _context.SaveChangesAsync();
 
-            // Cargar el Barbero y Servicio para la notificación (se accede después de guardar)
+            // Cargar el Barbero y Servicio para la notificación
             var barber = await _context.Barbers.FindAsync(Appointment.BarberId);
 
-            // --- 5. Enviar Notificaciones Automatizadas (Sintaxis Corregida) ---
+            // --- 6. Enviar Notificaciones Automatizadas ---
 
             // A. Notificación al Cliente
             string clientSubject = $"✅ Cita Confirmada: {service.Name} con {barber.Name}";
             string clientBody = $@"
-        <h1>¡Cita Confirmada, {Appointment.ClientName}!</h1>
-        <p>Tu cita ha sido reservada con éxito en BarberShopApp:</p>
-        <ul>
-            <li><strong>Barbero:</strong> {barber.Name}</li>
-            <li><strong>Servicio:</strong> {service.Name}</li>
-            <li><strong>Fecha y Hora:</strong> {Appointment.DateTime.ToString("dddd, dd MMMM yyyy, HH:mm")}</li>
-        </ul>
-        <p>Gracias por tu reserva. ¡Te esperamos!</p>
-    ";
+    <h1>¡Cita Confirmada, {Appointment.ClientName}!</h1>
+    <p>Tu cita ha sido reservada con éxito en BarberShopApp:</p>
+    <ul>
+        <li><strong>Barbero:</strong> {barber.Name}</li>
+        <li><strong>Servicio:</strong> {service.Name}</li>
+        <li><strong>Fecha y Hora:</strong> {Appointment.DateTime.ToString("dddd, dd MMMM yyyy, HH:mm")}</li>
+    </ul>
+    <p>Gracias por tu reserva. ¡Te esperamos!</p>
+";
             await _emailService.SendEmailAsync(Appointment.ClientEmail, clientSubject, clientBody);
 
 
@@ -115,18 +148,18 @@ namespace BarberShopApp.Pages.Appointments
             string barberEmail = _configuration["EmailSettings:BarberEmail"];
             string barberSubject = $"🔔 NUEVA RESERVA: {service.Name} a las {Appointment.DateTime.ToString("HH:mm")}";
             string barberBody = $@"
-        <h2>Nueva Cita Reservada</h2>
-        <p>Se ha reservado una nueva cita para el Barbero: <strong>{barber.Name}</strong>.</p>
-        <ul>
-            <li><strong>Cliente:</strong> {Appointment.ClientName} ({Appointment.ClientEmail})</li>
-            <li><strong>Servicio:</strong> {service.Name}</li>
-            <li><strong>Duración Estimada:</strong> {service.DurationMinutes} minutos</li>
-            <li><strong>Fecha y Hora:</strong> {Appointment.DateTime.ToString("dddd, dd MMMM yyyy, HH:mm")}</li>
-        </ul>
-    ";
+    <h2>Nueva Cita Reservada</h2>
+    <p>Se ha reservado una nueva cita para el Barbero: <strong>{barber.Name}</strong>.</p>
+    <ul>
+        <li><strong>Cliente:</strong> {Appointment.ClientName} ({Appointment.ClientEmail})</li>
+        <li><strong>Servicio:</strong> {service.Name}</li>
+        <li><strong>Duración Estimada:</strong> {service.DurationMinutes} minutos</li>
+        <li><strong>Fecha y Hora:</strong> {Appointment.DateTime.ToString("dddd, dd MMMM yyyy, HH:mm")}</li>
+    </ul>
+";
             await _emailService.SendEmailAsync(barberEmail, barberSubject, barberBody);
 
-            // 6. Redirigir a una página de confirmación usando el AppointmentId generado
+            // 7. Redirigir a una página de confirmación usando el AppointmentId generado
             return RedirectToPage("./Confirmation", new { id = Appointment.AppointmentId });
         }
 

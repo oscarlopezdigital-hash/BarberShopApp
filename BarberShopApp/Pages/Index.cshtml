@@ -1,10 +1,124 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Dashboard - Resumen Diario";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container my-5">
+
+    <header class="mb-5 pb-3 border-bottom">
+        <h1 class="display-5 fw-bold text-dark">
+            <i class="bi bi-grid-fill me-3 text-secondary"></i> ¡Bienvenido a la Barbería Central!
+        </h1>
+        <p class="lead text-muted">Resumen ejecutivo y agenda del día @DateTime.Today.ToShortDateString().</p>
+    </header>
+
+
+    <div class="row mb-5 g-4">
+
+        <div class="col-lg-4 col-md-6">
+            <div class="card shadow-lg border-start border-5 border-primary h-100">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <h5 class="card-title text-primary fw-light">Citas Confirmadas Hoy</h5>
+                            <p class="display-3 mb-0 fw-bolder">@Model.TotalAppointmentsToday</p>
+                        </div>
+                        <div class="col-4 text-end">
+                            <i class="bi bi-calendar-check-fill opacity-50" style="font-size: 3.5rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8 col-md-6">
+            <div class="card shadow-lg border-start border-5 border-dark h-100">
+                <div class="card-body">
+                    @if (Model.NextAppointment != null)
+                    {
+                        <h5 class="card-title text-dark fw-light mb-3">
+                            <i class="bi bi-person-check me-2"></i> Próxima Cita
+                        </h5>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="display-6 mb-0 fw-bold text-success">
+                                    @Model.NextAppointment.DateTime.ToString("HH:mm")
+                                </p>
+                                <p class="lead mb-0">con **@Model.NextAppointment.ClientName**</p>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-secondary mb-1">@Model.NextAppointment.Barber!.Name</span>
+                                <p class="mb-0 small text-muted">Servicio: @Model.NextAppointment.Service!.Name</p>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <h5 class="card-title text-dark fw-light">Próxima Cita:</h5>
+                        <p class="display-6 mb-0 fw-bold text-success">
+                            <i class="bi bi-cup-hot me-2"></i> ¡Día Tranquilo!
+                        </p>
+                        <small class="text-muted">Aprovecha para descansar o hacer promociones.</small>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <h2 class="h4 mb-4">
+                <i class="bi bi-list-task me-2"></i> Agenda Detallada para Hoy
+            </h2>
+
+            @if (Model.AppointmentsToday.Any())
+            {
+                <ul class="list-group shadow-lg rounded-3">
+                    @foreach (var appointment in Model.AppointmentsToday)
+                    {
+                        // Estilo para citas que ya pasaron
+                        string timePassedClass = appointment.DateTime < DateTime.Now ? "list-group-item-secondary text-muted" : "bg-white";
+
+                        <li class="list-group-item d-flex justify-content-between align-items-center @timePassedClass">
+
+                            <div class="d-flex align-items-center">
+                                <span class="badge @(timePassedClass.Contains("secondary") ? "bg-muted text-dark" : "bg-dark") fs-5 me-3 p-2">
+                                    @appointment.DateTime.ToString("HH:mm")
+                                </span>
+
+                                <div class="ms-2">
+                                    <strong class="fs-6">@appointment.ClientName</strong>
+                                    <small class="ms-3 d-none d-md-inline text-muted">(@appointment.ClientEmail)</small>
+                                </div>
+                            </div>
+
+                            <div class="text-end d-flex align-items-center">
+                                <span class="badge bg-info text-dark me-3">@appointment.Barber!.Name</span>
+                                <span class="badge bg-primary">
+                                    @appointment.Service!.Name
+                                    <small>(@appointment.Service!.DurationMinutes min)</small>
+                                </span>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <i class="bi bi-info-circle-fill me-2"></i> No hay citas confirmadas para el día de hoy. ¡Es un buen momento para planificar!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="mt-5 text-center">
+        <a asp-page="./Appointments/Index" class="btn btn-outline-dark btn-lg">
+            Ver Agenda Completa de Citas <i class="bi bi-arrow-right ms-2"></i>
+        </a>
+    </div>
 </div>
