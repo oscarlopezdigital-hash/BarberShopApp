@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿// Models/Service.cs
+
+using System.ComponentModel.DataAnnotations;
 
 namespace BarberShopApp.Models
 {
@@ -10,6 +12,11 @@ namespace BarberShopApp.Models
         [StringLength(100)]
         public string? Name { get; set; }
 
+        // *** ¡AÑADIR ESTA PROPIEDAD! ***
+        [Display(Name = "Descripción del Servicio")]
+        public string? Description { get; set; }
+        // ********************************
+
         [Required(ErrorMessage = "El precio es obligatorio.")]
         [Range(0.01, 1000.00, ErrorMessage = "El precio debe ser positivo.")]
         public decimal Price { get; set; }
@@ -17,7 +24,6 @@ namespace BarberShopApp.Models
         [Required(ErrorMessage = "La duración es obligatoria.")]
         [Display(Name = "Duración (minutos)")]
         public int DurationMinutes { get; set; }
-
 
         // Clave Foránea de Tenant
         public int TenantId { get; set; }

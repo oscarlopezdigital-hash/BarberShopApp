@@ -5,65 +5,113 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - BarberShopApp</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/BarberShopApp.styles.css" asp-append-version="true" />
+
+    <style>
+        /* Fondo de la aplicación muy claro para que las tarjetas destaquen */
+        body {
+            background-color: #f8f9fa;
+        }
+        /* Color principal de la marca (puedes cambiar este color si lo deseas) */
+        .text-brand-primary {
+            color: #ffc107 !important; /* Amarillo/Dorado, clásico de barbería */
+        }
+        /* Sombra sutil para la barra de navegación */
+        .navbar-custom {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-4 navbar-custom">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">BarberShopApp</a>
+
+                <a class="navbar-brand fw-bold text-brand-primary" asp-area="" asp-page="/Index">
+                    <i class="bi bi-scissors me-2"></i> BarberShop Central
+                </a>
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
+
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                            <a class="nav-link text-white" asp-area="" asp-page="/Index">
+                                <i class="bi bi-house-door-fill me-1"></i> Dashboard
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
+                            <a class="nav-link text-white" asp-area="" asp-page="/Services/PublicIndex">
+                                <i class="bi bi-tag-fill me-1"></i> Servicios
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                            <a class="btn btn-warning fw-bold text-dark shadow-sm ms-lg-3" asp-area="" asp-page="/Appointments/Create">
+                                <i class="bi bi-calendar-plus me-1"></i> RESERVAR CITA
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Appointments/Create">Crear Cita</a>
-                        </li>
+
                         @if (User.Identity.IsAuthenticated)
                         {
-                            // ENLACES PARA EL ADMINISTRADOR DE LA BARBERÍA
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-page="/Services/Index">Gestión de Servicios</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-page="/Barbers/Index">Gestión de Barberos</a>
+                            <li class="nav-item d-none d-lg-block">
+                                <span class="nav-link text-muted">|</span>
                             </li>
 
-                            // ENLACE EXCLUSIVO PARA EL SUPER-ADMIN (Opcional, pero útil para ti)
-                            @if (User.Identity.Name == "admin@tubarberia.com") // Condición de ejemplo para el Super-Admin
+                            <li class="nav-item">
+                                <a class="nav-link text-white-50" asp-area="" asp-page="/Appointments/Index">
+                                    <i class="bi bi-calendar-check me-1"></i> Agenda
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white-50" asp-area="" asp-page="/Services/Index">
+                                    <i class="bi bi-card-checklist me-1"></i> Servicios (Admin)
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white-50" asp-area="" asp-page="/Barbers/Index">
+                                    <i class="bi bi-people-fill me-1"></i> Barberos
+                                </a>
+                            </li>
+
+                            @if (User.Identity.Name == "admin@tubarberia.com")
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-page="/Tenants/Index">Super-Admin (Tenants)</a>
+                                    <a class="nav-link text-danger" asp-area="" asp-page="/Tenants/Index">
+                                        <i class="bi bi-gear-fill me-1"></i> Super-Admin
+                                    </a>
                                 </li>
                             }
                         }
+
                     </ul>
+
                     <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - BarberShopApp - <a asp-area="" asp-page="/Privacy">Privacy</a>
+    <footer class="footer bg-dark text-white-50 py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">
+                &copy; 2025 - BarberShop Central - Todos los derechos reservados.
+            </p>
+            <p class="mb-0 small">
+                <a asp-area="" asp-page="/Privacy" class="text-white-50 text-decoration-none">Política de Privacidad</a>
+            </p>
         </div>
     </footer>
 
