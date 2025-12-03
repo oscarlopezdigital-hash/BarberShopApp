@@ -1,0 +1,154 @@
+﻿@page
+@model BarberShopApp.Pages.Client.IndexModel
+
+@{
+    ViewData["Title"] = "Mi Panel de Citas";
+}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold text-dark">
+                <i class="bi bi-person-badge me-2 text-brand-primary"></i> Bienvenido, @User.Identity.Name
+            </h1>
+            <p class="lead text-muted">Aquí puede gestionar sus próximas citas y revisar su historial de servicios.</p>
+            <hr class="mb-4" />
+        </div>
+    </div>
+
+    @if (TempData["StatusMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["StatusMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row">
+
+        <div class="col-lg-8">
+            <h2 class="h4 mt-4 mb-3 pb-2 border-bottom text-dark fw-bold">
+                <i class="bi bi-calendar-event me-2"></i> Próximas Citas (@Model.FutureAppointments.Count)
+            </h2>
+
+            @if (Model.FutureAppointments.Count == 0)
+            {
+                <div class="alert alert-dark text-center py-4 rounded-4 shadow-sm">
+                    <p class="h5 mb-2">¡No tiene citas pendientes programadas!</p>
+                    <a asp-page="/Appointments/Create" class="btn btn-warning fw-bold mt-2">
+                        <i class="bi bi-calendar-plus me-1"></i> Reserve su cita ahora
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="accordion" id="futureAppointmentsAccordion">
+                    @foreach (var item in Model.FutureAppointments)
+                    {
+                        string statusBadgeClass = item.Status switch
+                        {
+                            "Confirmada" => "bg-success",
+                            "Pendiente" => "bg-warning text-dark",
+                            _ => "bg-secondary"
+                        };
+
+                        <div class="card mb-3 border-0 shadow-sm rounded-3">
+                            <div class="card-header bg-white p-3 border-0">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge @statusBadgeClass me-3 p-2">@item.Status</span>
+                                        <h5 class="card-title fw-bold text-dark mb-0">@item.Service!.Name</h5>
+                                    </div>
+
+                                    @if (item.Status == "Confirmada" || item.Status == "Pendiente")
+                                    {
+                                        <form method="post" class="d-inline">
+                                            <input type="hidden" asp-for="@item.AppointmentId" name="id" />
+                                            <button type="submit" asp-page-handler="Cancel" class="btn btn-outline-danger btn-sm"
+                                                    onclick="return confirm('¿Está seguro que desea cancelar su cita para el @item.DateTime.ToString("dd MMMM yyyy")? Esta acción no se puede deshacer.')"
+                                                    title="Cancelar Cita">
+                                                <i class="bi bi-x-circle me-1"></i> Cancelar
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary p-2">@item.Status</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="card-body pt-0 pb-3">
+                                <p class="card-text mb-1">
+                                    <i class="bi bi-person-circle me-2 text-brand-primary"></i>
+                                    **Barbero:** <span class="fw-semibold text-dark">@item.Barber!.Name</span>
+                                </p>
+                                <p class="card-text mb-0">
+                                    <i class="bi bi-calendar-check me-2 text-brand-primary"></i>
+                                    **Fecha:** **@item.DateTime.ToString("dd MMMM yyyy")** a las **@item.DateTime.ToString("HH:mm")**
+                                </p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+
+            <h2 class="h4 mt-5 mb-3 pb-2 border-bottom text-dark fw-bold">
+                <i class="bi bi-clock-history me-2"></i> Historial de Servicios (@Model.PastAppointments.Count)
+            </h2>
+
+            @if (Model.PastAppointments.Count == 0)
+            {
+                <div class="alert alert-light border text-center">
+                    Su historial de servicios pasados está vacío.
+                </div>
+            }
+            else
+            {
+                <ul class="list-group list-group-flush border rounded-3 shadow-sm bg-white">
+                    @foreach (var item in Model.PastAppointments.Take(10)) @* Mostramos solo los últimos 10 *@
+                    {
+                        string statusBadgeClass = item.Status switch
+                        {
+                            "Confirmada" => "bg-primary",
+                            "Cancelada" => "bg-danger",
+                            _ => "bg-secondary"
+                        };
+
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="fw-semibold">@item.Service!.Name</span> con <span class="text-muted">@item.Barber!.Name</span>
+                                <small class="text-secondary ms-3">
+                                    <i class="bi bi-calendar-fill me-1"></i> @item.DateTime.ToString("dd/MM/yyyy")
+                                </small>
+                            </div>
+                            <span class="badge @statusBadgeClass rounded-pill p-2">@item.Status</span>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mt-4 border-0 shadow-lg sticky-top" style="top: 20px;">
+                <div class="card-header bg-dark text-white fw-bold">
+                    <i class="bi bi-clipboard-check me-2"></i> Datos de la Cuenta
+                </div>
+                <div class="card-body">
+                    <p class="card-text mb-1">
+                        <span class="fw-semibold">Email:</span> <strong>@User.Identity.Name</strong>
+                    </p>
+                    <p class="card-text mb-3">
+                        <span class="fw-semibold">Teléfono:</span> <span class="text-muted">(No disponible)</span>
+                    </p>
+                    <hr />
+                    <small class="text-muted d-block mt-2">
+                        Si necesita actualizar su información o tiene preguntas, por favor contáctenos.
+                    </small>
+                    <a asp-page="/Appointments/Create" class="btn btn-warning btn-sm w-100 mt-3 fw-bold">
+                        <i class="bi bi-repeat me-1"></i> Reservar otra cita
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

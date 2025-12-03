@@ -13,106 +13,167 @@
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.css' rel='stylesheet' />
 
     <style>
-        /* Fondo de la aplicación muy claro para que las tarjetas destaquen */
+        /* 1. Definimos el ancho de la mini-barra lateral y espaciado */
+        :root {
+            --mini-sidebar-width: 80px; /* Muy estrecha */
+            --color-accent: #CC0000; /* Rojo Clásico */
+            --color-sidebar: #1A1A1A; /* Negro Profundo */
+            --color-body: #EAEAEA; /* GRIS CEMENTO CÁLIDO */
+            --color-text-dark: #333333;
+            --color-text-light: #EEEEEE;
+        }
+
+        /* 2. Fondo del cuerpo: Gris Cemento y texto oscuro */
         body {
-            background-color: #f8f9fa;
+            background-color: var(--color-body);
+            color: var(--color-text-dark);
+            padding-left: var(--mini-sidebar-width);
+            font-family: 'Georgia', serif;
         }
-        /* Color principal de la marca (puedes cambiar este color si lo deseas) */
+
+        /* 3. Color de marca (Acento: Rojo Clásico Brillante) */
         .text-brand-primary {
-            color: #ffc107 !important; /* Amarillo/Dorado, clásico de barbería */
+            color: var(--color-accent) !important;
         }
-        /* Sombra sutil para la barra de navegación */
-        .navbar-custom {
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+
+        .bg-brand-primary {
+            background-color: var(--color-accent) !important;
+        }
+
+        /* 4. Mini-Barra Lateral Fija (Negro Profundo) */
+        .mini-sidebar {
+            width: var(--mini-sidebar-width);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            background-color: var(--color-sidebar); /* Negro Profundo */
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.4);
+            padding-top: 30px;
+        }
+
+            .mini-sidebar .nav-link {
+                color: var(--color-text-light); /* Texto gris muy claro */
+                text-align: center;
+                padding: 15px 0;
+                font-size: 0.75rem;
+                font-weight: 500;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                display: block;
+            }
+
+                .mini-sidebar .nav-link i {
+                    font-size: 1.5rem;
+                    display: block;
+                    margin-bottom: 3px;
+                }
+
+                .mini-sidebar .nav-link:hover, .mini-sidebar .nav-link.active {
+                    background-color: #333333; /* Gris oscuro al pasar el ratón */
+                    color: var(--color-accent) !important; /* Rojo en hover */
+                }
+
+        /* 5. Barra Superior (Contraste con el cuerpo) */
+        .top-header {
+            background-color: #ffffff;
+            border-bottom: 2px solid var(--color-accent); /* Borde Rojo */
+            padding: 15px 30px;
+            margin-left: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 6. Botón de acción destacado (Rojo) */
+        .btn-editorial {
+            font-weight: bold;
+            letter-spacing: 2px;
+            border-radius: 0 !important;
+            padding: 10px 25px;
         }
     </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-4 navbar-custom">
-            <div class="container">
 
-                <a class="navbar-brand fw-bold text-brand-primary" asp-area="" asp-page="/Index">
-                    <i class="bi bi-scissors me-2"></i> BarberShop Central
+    <aside class="mini-sidebar d-flex flex-column">
+
+        <div class="mb-4 text-center">
+            <a class="text-brand-primary" asp-area="" asp-page="/Index" style="text-decoration: none;">
+                <i class="bi bi-scissors" style="font-size: 2.5rem;"></i>
+            </a>
+        </div>
+
+        <ul class="nav flex-column flex-grow-1">
+
+            <li class="nav-item">
+                <a class="nav-link" asp-area="" asp-page="/Index">
+                    <i class="bi bi-house-door-fill"></i> Dashboard
                 </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-area="" asp-page="/Services/PublicIndex">
+                    <i class="bi bi-tag-fill"></i> Servicios
+                </a>
+            </li>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-page="/Appointments/Index">
+                        <i class="bi bi-calendar-check"></i> Agenda
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-page="/Services/Index">
+                        <i class="bi bi-card-checklist"></i> Admin.
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-page="/Barbers/Index">
+                        <i class="bi bi-people-fill"></i> Barberos
+                    </a>
+                </li>
 
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                @if (User.Identity.Name == "admin@tubarberia.com")
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-warning" asp-area="" asp-page="/Tenants/Index">
+                            <i class="bi bi-gear-fill"></i> S-Admin
+                        </a>
+                    </li>
+                }
+            }
 
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-page="/Index">
-                                <i class="bi bi-house-door-fill me-1"></i> Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-page="/Services/PublicIndex">
-                                <i class="bi bi-tag-fill me-1"></i> Servicios
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-warning fw-bold text-dark shadow-sm ms-lg-3" asp-area="" asp-page="/Appointments/Create">
-                                <i class="bi bi-calendar-plus me-1"></i> RESERVAR CITA
-                            </a>
-                        </li>
+        </ul>
+    </aside>
 
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item d-none d-lg-block">
-                                <span class="nav-link text-muted">|</span>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link text-white-50" asp-area="" asp-page="/Appointments/Index">
-                                    <i class="bi bi-calendar-check me-1"></i> Agenda
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white-50" asp-area="" asp-page="/Services/Index">
-                                    <i class="bi bi-card-checklist me-1"></i> Servicios (Admin)
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white-50" asp-area="" asp-page="/Barbers/Index">
-                                    <i class="bi bi-people-fill me-1"></i> Barberos
-                                </a>
-                            </li>
-
-                            @if (User.Identity.Name == "admin@tubarberia.com")
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-danger" asp-area="" asp-page="/Tenants/Index">
-                                        <i class="bi bi-gear-fill me-1"></i> Super-Admin
-                                    </a>
-                                </li>
-                            }
-                        }
-
-                    </ul>
-
-                    <partial name="_LoginPartial" />
-                </div>
+    <header class="top-header sticky-top">
+        <div class="fw-bold fs-5 text-dark">
+            <span class="text-brand-primary">BARBER</span>SHOP <span class="text-secondary">CENTRAL</span>
+        </div>
+        <div class="d-flex align-items-center">
+            <a class="btn bg-brand-primary btn-editorial fw-bold text-white shadow-sm me-4" asp-area="" asp-page="/Appointments/Create">
+                RESERVAR CITA
+            </a>
+            <div class="d-flex align-items-center fw-bold text-dark border rounded-pill px-3 py-1" style="border-color: var(--color-accent) !important;">
+                <partial name="_LoginPartial" />
             </div>
-        </nav>
+        </div>
     </header>
 
-    <div class="container">
+
+    <div class="container-fluid py-4">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="footer bg-dark text-white-50 py-4 mt-5">
+    <footer class="footer bg-white text-dark py-4 mt-5 border-top" style="border-color: var(--color-accent) !important;">
         <div class="container text-center">
-            <p class="mb-0">
-                &copy; 2025 - BarberShop Central - Todos los derechos reservados.
-            </p>
             <p class="mb-0 small">
-                <a asp-area="" asp-page="/Privacy" class="text-white-50 text-decoration-none">Política de Privacidad</a>
+                &copy; 2025 - BarberShop Central - Todos los derechos reservados. |
+                <a asp-area="" asp-page="/Privacy" class="text-dark text-decoration-underline">Política de Privacidad</a>
             </p>
         </div>
     </footer>
@@ -126,7 +187,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"></script>
 
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/locales-all.min.js'></script> 
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/locales-all.min.js'></script>
 
     <script src="~/js/site.js" asp-append-version="true"></script>
 

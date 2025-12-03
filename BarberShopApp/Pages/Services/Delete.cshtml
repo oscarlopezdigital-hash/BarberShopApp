@@ -4,36 +4,68 @@
     ViewData["Title"] = "Eliminar Servicio";
 }
 
-<h1>Eliminar</h1>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
 
-<h3>¿Está seguro de que quiere eliminar este servicio?</h3>
-<div>
-    <h4>Servicio</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Service.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Service.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Service.DurationMinutes)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Service.DurationMinutes) min.
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Service.Price)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Service.Price) €
-        </dd>
-    </dl>
+            <header class="text-center mb-5">
+                <h1 class="display-6 fw-bold text-danger">
+                    <i class="bi bi-trash-fill me-2"></i> @ViewData["Title"]
+                </h1>
+                <p class="lead text-muted">Esta acción es permanente e irreversible.</p>
+                <hr class="w-50 mx-auto border-danger" />
+            </header>
 
-    <form method="post">
-        <input type="hidden" asp-for="Service.ServiceId" />
-        <input type="submit" value="Eliminar" class="btn btn-danger" /> |
-        <a asp-page="./Index">Volver a la Lista</a>
-    </form>
+            <div class="card border-danger shadow-lg rounded-4">
+                <div class="card-header bg-danger text-white fw-bold h5">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> ¿Está seguro de que quiere eliminar este servicio?
+                </div>
+                <div class="card-body p-4">
+
+                    <h4 class="card-title text-danger mb-4">Detalles del Servicio a Eliminar:</h4>
+
+                    <dl class="row mb-4">
+                        <dt class="col-sm-4 fw-semibold">
+                            <i class="bi bi-tag-fill me-2"></i> @Html.DisplayNameFor(model => model.Service.Name)
+                        </dt>
+                        <dd class="col-sm-8 text-dark h5">
+                            @Html.DisplayFor(model => model.Service.Name)
+                        </dd>
+
+                        <dt class="col-sm-4 fw-semibold">
+                            <i class="bi bi-clock-fill me-2"></i> @Html.DisplayNameFor(model => model.Service.DurationMinutes)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.Service.DurationMinutes) min.
+                        </dd>
+
+                        <dt class="col-sm-4 fw-semibold">
+                            <i class="bi bi-currency-euro me-2"></i> @Html.DisplayNameFor(model => model.Service.Price)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.Service.Price) €
+                        </dd>
+                    </dl>
+
+                    <p class="text-muted small border-top pt-3">
+                        Al confirmar, todas las citas futuras asociadas a este servicio podrían verse afectadas.
+                    </p>
+
+                    <div class="mt-4 pt-3 border-top d-flex justify-content-between">
+                        <form method="post">
+                            <input type="hidden" asp-for="Service.ServiceId" />
+                            <button type="submit" value="Eliminar" class="btn btn-danger btn-lg shadow-sm">
+                                <i class="bi bi-check-circle-fill me-1"></i> Sí, Eliminar Permanentemente
+                            </button>
+                        </form>
+
+                        <a asp-page="./Index" class="btn btn-outline-secondary btn-lg">
+                            <i class="bi bi-arrow-left me-1"></i> Cancelar y Volver a la Lista
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
