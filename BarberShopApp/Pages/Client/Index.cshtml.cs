@@ -1,13 +1,13 @@
-﻿using BarberShopApp.Data;
-using BarberShopApp.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using System; // Necesario para DateTime
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
+using BarberShopApp.Data;
+using BarberShopApp.Models;
 using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using System; // Necesario para DateTime
 
 namespace BarberShopApp.Pages.Client
 {
@@ -26,7 +26,7 @@ namespace BarberShopApp.Pages.Client
         public IList<Appointment> FutureAppointments { get; set; } = new List<Appointment>();
         public IList<Appointment> PastAppointments { get; set; } = new List<Appointment>();
 
-        // 🎯 NUEVA PROPIEDAD DE DIAGNÓSTICO: Email del usuario logueado
+        // 🎯 PROPIEDAD DE DIAGNÓSTICO: Email del usuario logueado
         public string CurrentClientEmail { get; set; } = string.Empty;
 
 
@@ -37,9 +37,9 @@ namespace BarberShopApp.Pages.Client
 
         public async Task OnGetAsync()
         {
-            // Obtener el email del usuario logueado para filtrar sus citas.
-            // User.Identity.Name es el email/username del usuario autenticado (siempre en minúsculas en ASP.NET Identity)
-            var clientEmail = User.Identity?.Name?.ToLowerInvariant();
+            // Obtener el email del usuario logueado, normalizado a minúsculas
+            // Usamos ToLower() en lugar de ToLowerInvariant() para asegurar la traducción a SQL
+            var clientEmail = User.Identity?.Name?.ToLower();
 
             // Guardamos el email para mostrarlo en la vista (diagnóstico)
             CurrentClientEmail = clientEmail ?? "Usuario No Autenticado";
@@ -59,9 +59,9 @@ namespace BarberShopApp.Pages.Client
             Appointments = await _context.Appointments
                 .Include(a => a.Barber)
                 .Include(a => a.Service)
-                // FILTRO CORREGIDO Y MÁS ROBUSTO: 
-                // Aseguramos que el ClientEmail de la DB esté en minúsculas antes de compararlo
-                .Where(a => a.ClientEmail != null && a.ClientEmail.ToLowerInvariant() == clientEmail)
+                // FILTRO CORREGIDO (SQL Translation FIX): 
+                // Usamos ToLower() en lugar de ToLowerInvariant() para que EF Core lo pueda traducir a SQL (LOWER()).
+                .Where(a => !string.IsNullOrEmpty(a.ClientEmail) && a.ClientEmail.ToLower() == clientEmail)
                 .OrderByDescending(a => a.DateTime)
                 .ToListAsync();
 
@@ -86,8 +86,8 @@ namespace BarberShopApp.Pages.Client
             }
 
             var appointmentToCancel = await _context.Appointments.FindAsync(id);
-            // También normalizamos el email del usuario logueado para la comprobación de seguridad
-            var clientEmail = User.Identity?.Name?.ToLowerInvariant();
+            // También normalizamos el email del usuario logueado para la comprobación de seguridad (Usamos ToLower())
+            var clientEmail = User.Identity?.Name?.ToLower();
 
             if (appointmentToCancel == null)
             {
@@ -95,7 +95,7 @@ namespace BarberShopApp.Pages.Client
             }
 
             // SEGURIDAD: Confirmar que la cita pertenece al usuario logueado antes de cancelarla
-            if (appointmentToCancel.ClientEmail?.ToLowerInvariant() != clientEmail) // Usamos la comprobación normalizada
+            if (appointmentToCancel.ClientEmail?.ToLower() != clientEmail) // Usamos ToLower()
             {
                 // Si no coincide, devolvemos un error de Acceso Denegado
                 return Forbid();
