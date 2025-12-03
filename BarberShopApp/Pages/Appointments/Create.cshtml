@@ -125,6 +125,63 @@
 
         // Aquí iría el código AJAX para verificar la disponibilidad al cambiar la fecha/hora
         console.log("Lógica de filtrado de disponibilidad de citas intacta.");
+        $(document).ready(function () {
+            // IDs de los elementos clave
+            var $barberIdInput = $("#Appointment_BarberId");
+            var $dateInput = $("#SelectedDate");
+            var $timeInput = $("#SelectedTime");
+            var $serviceIdInput = $("#Appointment_ServiceId");
 
+            // Área para mostrar el mensaje de disponibilidad
+            var $availabilityMessage = $("<div id='availability-feedback' class='mt-2'></div>");
+            $timeInput.parent().after($availabilityMessage); // Insertar debajo del input de la hora
+
+            // 1. Función para verificar la disponibilidad vía AJAX
+            function checkAvailability() {
+                var barberId = $barberIdInput.val();
+                var date = $dateInput.val();
+                var time = $timeInput.val();
+                var serviceId = $serviceIdInput.val();
+
+                // 2. Comprobar si los 4 valores clave están seleccionados
+                if (barberId && date && time && serviceId) {
+                    $availabilityMessage.html("<span class='text-info'><i class='bi bi-arrow-clockwise'></i> Verificando disponibilidad...</span>");
+
+                    $.ajax({
+                        url: '?handler=CheckAvailability', // URL al nuevo handler
+                        type: 'GET',
+                        data: {
+                            barberId: barberId,
+                            date: date,
+                            time: time,
+                            serviceId: serviceId
+                        },
+                        success: function (data) {
+                            $availabilityMessage.removeClass('text-danger text-success').addClass(data.isAvailable ? 'text-success' : 'text-danger');
+                            $availabilityMessage.html(data.message);
+
+                            // Deshabilitar el botón de Confirmar si no está disponible
+                            $("#confirm-button").prop('disabled', !data.isAvailable);
+                        },
+                        error: function () {
+                            $availabilityMessage.html("<span class='text-danger'>Error al verificar la disponibilidad del servidor.</span>");
+                            $("#confirm-button").prop('disabled', true);
+                        }
+                    });
+                } else {
+                    $availabilityMessage.empty();
+                    $("#confirm-button").prop('disabled', false); // Habilitar si faltan campos, la validación de ModelState se encargará
+                }
+            }
+
+            // 3. Escuchar cambios en los inputs clave
+            $barberIdInput.on('change', checkAvailability);
+            $dateInput.on('change', checkAvailability);
+            $timeInput.on('change', checkAvailability);
+            $serviceIdInput.on('change', checkAvailability);
+
+            // Revisa al cargar la página si ya hay valores pre-seleccionados
+            checkAvailability();
+        });
     </script>
 }
