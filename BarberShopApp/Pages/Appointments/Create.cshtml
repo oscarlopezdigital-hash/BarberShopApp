@@ -14,7 +14,7 @@
                 <h1 class="display-5 fw-bold text-dark">
                     <i class="bi bi-calendar-check me-2 text-dark"></i> @ViewData["Title"]
                 </h1>
-                <p class="lead text-muted">¡Estás a solo unos pasos de confirmar tu turno! Por favor, completa la información de la cita.</p>
+                <p class="lead text-muted">Completa los datos para confirmar tu turno. Nuestro sistema verificará la disponibilidad en tiempo real.</p>
             </header>
 
             <div class="p-4 p-md-5 shadow-lg rounded-4 bg-white border border-2">
@@ -24,12 +24,56 @@
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
                     <h5 class="mt-4 mb-3 pb-2 border-bottom text-dark fw-bold">
-                        <i class="bi bi-person-lines-fill me-2"></i> 1. Tu Información
+                        <i class="bi bi-scissors me-2"></i> 1. Servicio y Barbero
                     </h5>
 
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input asp-for="Appointment.ClientName" class="form-control" placeholder="Tu Nombre Completo" />
+                            <select asp-for="Appointment.BarberId" id="Appointment_BarberId" class="form-select" asp-items="Model.BarberOptions">
+                                <option value="" selected disabled>Selecciona un barbero</option>
+                            </select>
+                            <label asp-for="Appointment.BarberId" for="Appointment_BarberId">Barbero</label>
+                            <span asp-validation-for="Appointment.BarberId" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select asp-for="Appointment.ServiceId" id="Appointment_ServiceId" class="form-select" asp-items="Model.ServiceOptions">
+                                <option value="" selected disabled>Selecciona un servicio</option>
+                            </select>
+                            <label asp-for="Appointment.ServiceId" for="Appointment_ServiceId">Servicio</label>
+                            <span asp-validation-for="Appointment.ServiceId" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <h5 class="mt-4 mb-3 pt-3 pb-2 border-bottom text-dark fw-bold">
+                        <i class="bi bi-clock-history me-2"></i> 2. Elige Fecha y Hora
+                    </h5>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="SelectedDate" id="SelectedDate" type="date" class="form-control" placeholder="Fecha de Cita" />
+                            <label asp-for="SelectedDate" for="SelectedDate">Fecha de Cita</label>
+                            <span asp-validation-for="SelectedDate" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="SelectedTime" id="SelectedTime" type="time" class="form-control" step="1800" placeholder="Hora de Cita" />
+                            <label asp-for="SelectedTime" for="SelectedTime">Hora de Cita</label>
+                            <span asp-validation-for="SelectedTime" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <h5 class="mt-4 mb-3 pt-3 pb-2 border-bottom text-dark fw-bold">
+                        <i class="bi bi-person-lines-fill me-2"></i> 3. Tu Información
+                    </h5>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Appointment.ClientName" class="form-control" placeholder="Nombre Completo" />
                             <label asp-for="Appointment.ClientName">Nombre Completo</label>
                             <span asp-validation-for="Appointment.ClientName" class="text-danger small mt-1 d-block"></span>
                         </div>
@@ -37,104 +81,50 @@
 
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input asp-for="Appointment.ClientEmail" type="email" class="form-control" placeholder="Tu Correo Electrónico" />
+                            <input asp-for="Appointment.ClientEmail" class="form-control" placeholder="Correo Electrónico" />
                             <label asp-for="Appointment.ClientEmail">Correo Electrónico</label>
                             <span asp-validation-for="Appointment.ClientEmail" class="text-danger small mt-1 d-block"></span>
                         </div>
                     </div>
 
-                    <h5 class="mt-4 mb-3 pt-3 pb-2 border-bottom text-dark fw-bold">
-                        <i class="bi bi-scissors me-2"></i> 2. Servicio y Barbero
-                    </h5>
-
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <select asp-for="Appointment.ServiceId" class="form-select" id="ServiceSelect" asp-items="Model.ServiceOptions">
-                                <option value="" selected disabled>Elige un servicio</option>
-                            </select>
-                            <label asp-for="Appointment.ServiceId" for="ServiceSelect">Servicio</label>
-                            <span asp-validation-for="Appointment.ServiceId" class="text-danger small mt-1 d-block"></span>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <select asp-for="Appointment.BarberId" class="form-select" id="BarberSelect" asp-items="Model.BarberOptions">
-                                <option value="" selected disabled>Elige un barbero</option>
-                            </select>
-                            <label asp-for="Appointment.BarberId" for="BarberSelect">Barbero</label>
-                            <span asp-validation-for="Appointment.BarberId" class="text-danger small mt-1 d-block"></span>
-                        </div>
-                    </div>
-
-                    <h5 class="mt-4 mb-3 pt-3 pb-2 border-bottom text-dark fw-bold">
-                        <i class="bi bi-clock-history me-2"></i> 3. Elige Fecha y Hora
-                    </h5>
-
-                    <div class="col-md-6 mb-3">
-                        <div class="form-floating">
-                            <input asp-for="SelectedDate" type="date" class="form-control" placeholder="Fecha de Cita"
-                                   min="@DateTime.Now.ToString("yyyy-MM-dd")" />
-                            <label asp-for="SelectedDate">Fecha de Cita</label>
-                            <span asp-validation-for="SelectedDate" class="text-danger small mt-1 d-block"></span>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <div class="form-floating">
-                            <input asp-for="SelectedTime" type="time" class="form-control" placeholder="Hora de Cita"
-                                   step="1800" @* step="1800" equivale a saltos de 30 minutos (30 * 60 segundos) *@
-                                   min="09:00" max="17:00" />
-                            <label asp-for="SelectedTime">Hora de Cita</label>
-                            <span asp-validation-for="SelectedTime" class="text-danger small mt-1 d-block"></span>
-                        </div>
-                    </div>
-
                     <div class="col-12 mt-5">
-                        <button type="submit" value="Reservar Cita" class="btn btn-dark btn-lg w-100 shadow-lg">
+                        <button type="submit" value="Confirmar Reserva" id="confirm-button" class="btn btn-dark btn-lg w-100 shadow-lg">
                             <i class="bi bi-calendar-check me-2"></i> Confirmar Reserva
                         </button>
                     </div>
                 </form>
 
-            </div>
+                <div class="text-center mt-3">
+                    <a asp-page="/Services/PublicIndex" class="text-muted small">
+                        <i class="bi bi-arrow-left me-1"></i> Volver a ver servicios
+                    </a>
+                </div>
 
+            </div>
         </div>
     </div>
 </div>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
     <script>
-        // LÓGICA JAVASCRIPT/AJAX ORIGINAL (NO MODIFICADA)
-        $(function () {
-            $('#datetimepicker1').datetimepicker({
-                format: 'YYYY-MM-DD HH:mm', // Formato de fecha y hora
-                minDate: moment(),         // No permite fechas pasadas
-                sideBySide: true,          // Muestra el selector de hora junto al de fecha
-                locale: 'es',              // Configura el idioma a español
-
-                // Solo permite seleccionar horas de Lunes a Viernes de 9:00 a 17:00
-                daysOfWeekDisabled: [0, 6], // Deshabilita Domingo (0) y Sábado (6)
-                enabledHours: [9, 10, 11, 12, 13, 14, 15, 16, 17],
-                stepping: 30 // Permite seleccionar cada 30 minutos
-            });
-        });
-
-        // Aquí iría el código AJAX para verificar la disponibilidad al cambiar la fecha/hora
-        console.log("Lógica de filtrado de disponibilidad de citas intacta.");
         $(document).ready(function () {
-            // IDs de los elementos clave
+            // IDs de los elementos clave (Asegúrate que coincidan con los inputs de arriba)
             var $barberIdInput = $("#Appointment_BarberId");
             var $dateInput = $("#SelectedDate");
             var $timeInput = $("#SelectedTime");
             var $serviceIdInput = $("#Appointment_ServiceId");
 
-            // Área para mostrar el mensaje de disponibilidad
+            // Área para mostrar el mensaje de disponibilidad (feedback visual)
             var $availabilityMessage = $("<div id='availability-feedback' class='mt-2'></div>");
-            $timeInput.parent().after($availabilityMessage); // Insertar debajo del input de la hora
+
+            // Insertar el área de feedback justo después del input de la hora
+            // Se asume que el input de hora está dentro de un div.col-md-6
+            // Buscamos el padre (col-md-6) del contenedor flotante y después de él
+            $timeInput.closest('.col-md-6').append($availabilityMessage);
 
             // 1. Función para verificar la disponibilidad vía AJAX
             function checkAvailability() {
@@ -145,10 +135,10 @@
 
                 // 2. Comprobar si los 4 valores clave están seleccionados
                 if (barberId && date && time && serviceId) {
-                    $availabilityMessage.html("<span class='text-info'><i class='bi bi-arrow-clockwise'></i> Verificando disponibilidad...</span>");
+                    $availabilityMessage.html("<span class='text-warning'><i class='bi bi-arrow-clockwise'></i> Verificando disponibilidad...</span>");
 
                     $.ajax({
-                        url: '?handler=CheckAvailability', // URL al nuevo handler
+                        url: '?handler=CheckAvailability', // Llama a OnGetCheckAvailabilityAsync
                         type: 'GET',
                         data: {
                             barberId: barberId,
@@ -157,7 +147,7 @@
                             serviceId: serviceId
                         },
                         success: function (data) {
-                            $availabilityMessage.removeClass('text-danger text-success').addClass(data.isAvailable ? 'text-success' : 'text-danger');
+                            $availabilityMessage.removeClass('text-danger text-success text-warning').addClass(data.isAvailable ? 'text-success' : 'text-danger');
                             $availabilityMessage.html(data.message);
 
                             // Deshabilitar el botón de Confirmar si no está disponible
@@ -170,7 +160,8 @@
                     });
                 } else {
                     $availabilityMessage.empty();
-                    $("#confirm-button").prop('disabled', false); // Habilitar si faltan campos, la validación de ModelState se encargará
+                    // Si faltan campos, habilitamos el botón, ya que la validación de ModelState lo manejará en el post
+                    $("#confirm-button").prop('disabled', false);
                 }
             }
 
